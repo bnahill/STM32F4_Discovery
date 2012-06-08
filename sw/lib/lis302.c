@@ -1,5 +1,28 @@
 #include "lis302.h"
 
+//! @addtogroup lis302
+//! @{
+
+//! Global LIS302 state structure
+lis302_t lis302 = {
+	// Initial reading values
+	{0.0, 0.0, 0.0},
+	// NSS pin configuration
+	{GPIOE, BIT(3)},
+	// SPI device to use
+	&spi1,
+	// Output data rate
+	LIS302_ODR_100,
+	// Full-scale range
+	LIS302_FS_9_2,
+	// Power mode
+	LIS302_PM_ON
+};
+	
+//! @addtogroup Private
+//! @{
+
+//! LIS302 register definitions
 typedef enum {
 	LIS302_REG_WHOAMI       = 0x0F,
 	LIS302_REG_CTRL1        = 0x20,
@@ -28,27 +51,24 @@ typedef enum {
 } lis302_addr_t;
 
 //! Sensitivity constants to be indexed by lis302_fs_t
-const float lis302_fs_scale[] = {
+static const float lis302_fs_scale[] = {
 	18.0 / 1000.0,
 	72.0 / 1000.0
 };
 
+//! @name I2C transfer mode bits
+//! @{
 
-lis302_t lis302 = {
-	// Initial reading values
-	{0.0, 0.0, 0.0},
-	// NSS configuration
-	{GPIOE, BIT(3)},
-	&spi1,
-	LIS302_ODR_100,
-	LIS302_FS_9_2,
-	LIS302_PM_ON
-};
-
+//! Write data to LIS302
 #define LIS302_MASK_WRITE 0x00
+//! Read data from LIS302
 #define LIS302_MASK_READ  0x80
+//! Don't increment address for each successive byte
 #define LIS302_MASK_NOINC 0x00
+//! Increment address for each successive byte
 #define LIS302_MASK_INC   0x40
+
+//! @}
 
 static int lis302_do_init(lis302_t *lis);
 static void lis302_do_read(lis302_t *lis);
@@ -56,6 +76,10 @@ static int  lis302_do_xfer_complete(lis302_t *lis);
 static void lis302_do_update(lis302_t *lis);
 static uint8_t lis302_read_register(lis302_t *lis, lis302_addr_t addr);
 static void lis302_write_register(lis302_t *lis, lis302_addr_t addr, uint8_t value);
+
+//! @}
+
+//! @}
 
 static int lis302_do_init(lis302_t *lis){
 	spi_init_slave(&lis->nss);

@@ -7,7 +7,13 @@
 #include "stm32f4xx_conf.h"
 #include "spi.h"
 
+/*!
+ @addtogroup spi
+ @{
+ */
+
 #if USE_SPI1
+//! Configuration for SPI1
 static const spi_config_t spi1_config = {
 	// AF
 	GPIO_AF_SPI1,
@@ -41,6 +47,7 @@ static const spi_config_t spi1_config = {
 	RCC_APB2Periph_SPI1
 };
 
+//! State structure for SPI1
 spi_t spi1 = {
 	// SPI Device
 	SPI1,
@@ -51,8 +58,30 @@ spi_t spi1 = {
 	// Config
 	&spi1_config
 };
+
+//! DMA ISR for SPI1
 #define SPI1_DMA_ISR DMA2_Stream0_IRQHandler
 #endif
+
+//! @addtogroup spi_priv Private
+//! @{
+
+/*!
+ @brief Assign and start an SPI transfer
+ @param spi The SPI device to use
+ @param xfer The transfer to start
+ */
+void spi_run_xfer(spi_t *spi, spi_transfer_t *xfer);
+
+/*!
+ @brief DMA ISR -- Finish a SPI transfer and start another if queued
+ @param spi The SPI device calling the ISR
+ */
+void spi_dma_isr(spi_t *spi);
+
+//! @}
+
+//! @}
 
 void spi_init_slave(gpio_pin_t *pin){
 	GPIO_InitTypeDef gpio_init_s;

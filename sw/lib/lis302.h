@@ -2,21 +2,30 @@
 #include "sensor_config.h"
 #include "spi.h"
 
+/*! @addtogroup lis302 LIS302 Accelerometer
+ @brief ST LIS302 accelerometer driver using the SPI interface
+ @{
+ */
+
+//! LIS302 output rate
 typedef enum {
 	LIS302_ODR_100 = 0,
 	LIS302_ODR_400 = 1
 } lis302_odr_t;
 
+//! LIS302 full-scale range
 typedef enum {
 	LIS302_FS_2_3 = 0,
 	LIS302_FS_9_2 = 1
 } lis302_fs_t;
 
+//! LIS302 power mode
 typedef enum {
 	LIS302_PM_OFF = 0,
 	LIS302_PM_ON = 1
 } lis302_pm_t;
 
+//! LIS302 state and configuration structure
 typedef struct {
 	//! Reading in g
 	euclidean3_t        reading;
@@ -68,3 +77,5 @@ void lis302_update(void);
  @brief Perform the whole sequence of read, wait, update
  */
 void lis302_read_sync(void);
+
+//! @}
